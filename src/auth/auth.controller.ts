@@ -16,18 +16,22 @@ export class AuthController {
   localSignIn(@Body() dto: AuthDto): Promise<Tokens> {
     return this.authService.localSignIn(dto);
   }
-  @Post('refresh')
-  refresh() {
-    return this.authService.refresh();
-  }
 
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   logout(@Req() req: RequestWithUser) {
-    console.log("user",req.user);
-    
+    console.log('user', req.user);
     const userId = req.user.sub;
     return this.authService.logout(userId);
+  }
+  @Post('refresh')
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @HttpCode(HttpStatus.OK)
+  refresh(@Req() req: RequestWithUser): Promise<Tokens> {
+    console.log('user', req.user);
+    const userId = req.user.sub;
+    const rt = req.user.refreshToken;
+    return this.authService.refresh(userId, rt);
   }
 }

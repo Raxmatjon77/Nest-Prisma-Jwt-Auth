@@ -42,12 +42,31 @@ export class AuthService {
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
-  refresh() {
-    return 'local signin';
+  async refresh(userId: number, rt: string): Promise<Tokens> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    console.log('rt', rt);
+    console.log('hash', user.hashedRt);
+
+    if (!user) throw new NotFoundException('User not Found !');
+    const rtMatches = await bcrypt.compare(rt, user.hashedRt);
+    if (!rtMatches) throw new ForbiddenException('access denied !');
+
+    const tokens = await this.getTokens(userId, user.email);
+    await this.updateRtHash(user.id, tokens.refresh_token);
+    return tokens;
   }
   async logout(userId: number) {
     await this.prisma.user.updateMany({
-      where: { id: userId },
+      where: {
+        id: userId,
+        hashedRt: {
+          not: null,
+        },
+      },
       data: { hashedRt: null },
     });
     return { message: 'Logged out successfully' };

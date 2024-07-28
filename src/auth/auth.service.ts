@@ -20,10 +20,11 @@ export class AuthService {
         email:dto.email
       }
     })
+      console.log("existuser: ",existuser);
     if (existuser) {
       throw new BadRequestException('User with this email is already exist !')
     }
-    console.log(existuser);
+  
     
     const newUser = await this.prisma.user.create({
       data: {

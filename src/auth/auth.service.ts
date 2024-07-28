@@ -15,7 +15,7 @@ export class AuthService {
 
   async localSignUp(dto: AuthDto): Promise<Tokens> {
     let hash = this.hashdata(dto.password);
-    let existuser=this.prisma.user.findMany({
+    let existuser=this.prisma.user.findUnique({
       where:{
         email:dto.email
       }

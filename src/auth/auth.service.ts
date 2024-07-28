@@ -15,13 +15,13 @@ export class AuthService {
 
   async localSignUp(dto: AuthDto): Promise<Tokens> {
     let hash = this.hashdata(dto.password);
-    let existuser=this.prisma.user.findUnique({
+    let existuser= await this.prisma.user.findUnique({
       where:{
         email:dto.email
       }
     })
       console.log("existuser: ",existuser);
-    if (existuser) {
+    if ( existuser.email) {
       throw new BadRequestException('User with this email is already exist !')
     }
   

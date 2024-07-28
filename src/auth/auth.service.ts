@@ -21,7 +21,7 @@ export class AuthService {
       }
     })
       console.log("existuser: ",existuser);
-    if ( existuser.email) {
+    if ( existuser?.email) {
       throw new BadRequestException('User with this email is already exist !')
     }
   
